@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<title>Gabarito Enem 2018</title>
+</head>
+<body>
+	<style type="text/css">
+		*{
+			box-sizing: border-box;
+		}
+		#radioQuestoes {
+			width: 100%;
+			height: 450px;
+			background-color: #dc6598;
+		}
+
+		.coluna {
+			float: left;
+			width: 16.66%;
+			height: 100%;
+		}
+
+		.linha {
+			width: 100%;
+			height: 6.65%;
+			border : 1px dashed red;
+			background-color: white;
+			font-size: 1.2em;
+			vertical-align: middle;
+			padding: 2px;
+		}
+
+		.nQuestao {
+			height: 100%;
+			border-right: orange;
+			width: 17%;
+			float: left;
+			text-align: center;
+		}
+
+		.alternativa {
+			width: 15%;
+			height: 100%;
+			text-align: center;
+			border : 2px solid black;
+			vertical-align: middle;
+			line-height: 100%;
+			border-radius: 50%;
+			margin: 1px;
+			float: left;
+		}
+
+		.alternativa:hover {
+			cursor: pointer;
+			background-color: black;
+			color: white;
+		}
+
+		#questoesAcertadas {
+			color: white;
+			position: fixed;
+			right: 0;
+			margin-top: -550px;
+			width: 140px;
+			height: 50px;
+			opacity: 1;
+			border-radius: 30px 0 0 30px;
+			background-color: black;
+			text-align: center;
+			-webkit-transition: opacity .25s ease-in-out .0s;
+    		transition: opacity .25s ease-in-out .0s;
+		}
+
+		#questoesAcertadas:hover {
+			opacity: 0;
+			-webkit-transition: opacity .25s ease-in-out .0s;
+    		transition: opacity .25s ease-in-out .0s;
+		}
+
+		#tituloQuestoesAcertadas {
+			font-size: 0.8em;
+		}
+
+		#numeroQuestoesAcertadas {
+			font-size: 1.7em;
+		}
+
+	</style>
+	<h3 style="text-align: center">Veja quantas questões você acertou!</h1>
+	<div id="selecionarInfo">
+		<label>Selecione qual foi a cor da sua apostila : </label>
+		<select id="corProva">
+			<option>Amarelo</option>
+			<option>Azul</option>
+			<option>Rosa</option>
+			<option>Branco</option>
+		</select>
+		<br>
+		<label>Selecione a lingua estrangeira realizada:</label>
+		<select id="linguaEstrangeira">
+			<option>Inglês</option>
+			<option>Espanhol</option>
+		</select>
+		<br>
+		<button id="criarQuestoes">Preencher gabarito</button>
+	</div>
+	<h3 style="text-align: center" id="provaSelecionada"></h2>
+	<div id="radioQuestoes">
+	</div>
+	<div id="questoesAcertadas">
+		<div id="tituloQuestoesAcertadas">Questões acertadas :</div>
+		<div id="numeroQuestoesAcertadas">0/90</div>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E=" crossorigin="anonymous"></script>
+	<script>
+	let questoesSelecionadas;
+	let gabarito = [];
+	let questoesAcertadas ;
+	//gabarito das linguas estrangeiras
+	var gabaritoLinguasEstrangeiras = [
+	[
+	["Gabarito Amarelo Lingua Inglesa - Questões corrigidas pelo Sistema COC de Ensino (G1)", "B", "B", "E", "D", "C"],
+	["Gabarito Amarelo Lingua Espanhola - Questões corrigidas pelo Sistema COC de Ensino (G1)", "C", "B", "B", "D", "B"]
+	],
+	[
+	["Gabarito Azul Lingua Inglesa - Questões corrigidas pelo Sistema COC de Ensino (G1)", "B", "B", "D", "E", "C"],
+	["Gabarito Azul Lingua Espanhola - Questões corrigidas pelo Sistema COC de Ensino (G1)", "B", "B", "C", "D", "B"]
+	], 
+	[
+	["Gabarito Rosa Lingua Inglesa - Questões corrigidas pela equipe Chromos", "C", "B", "E", "D", "B"],
+	["Gabarito Rosa Lingua Espanhola - Questões corrigidas pela equipe Chromos", "B", "B", "D", "C", "B"]
+	],
+	[
+	["Gabarito Branco Lingua Inglesa - Questões corrigidas pelo Sistema COC de Ensino (G1)", "B", "C", "D", "E", "B"],
+	["Gabarito Branco Lingua Espanhola - Questões corrigidas pelo Sistema COC de Ensino (G1)", "D", "B", "C", "B", "B"]
+	]
+	];
+
+	console.log('ta conectado!');
+	console.log(gabaritoLinguasEstrangeiras);
+
+
+	//o gabarito comeca a partida da questao 6
+	const gabaritoTodasCores = [
+	//gabarito amarelo
+	//questoes 6 a 15
+	["B", "B", "C", "A", "D", "B", "C", "A", "C", "E",
+	//questoes 16 a 25
+	 "D", "B", "E", "C", "D", "A", "B", "A", "A", "B",
+	//questoes 26 a 35
+	  "C", "B", "A", "E", "C", "C", "D", "E", "B", "B",
+	//questoes 36 a 45
+	  "D", "D", "E", "A", "D", "D", "C", "E", "C", "B", 
+	//questtoes 46 a 55
+	  "A", "E", "E", "C", "D", "E", "C", "B", "E", "B",
+	//questoes 56 a 65
+	  "D", "C", "A", "C", "d", "E", "D", "E", "E", "D",
+	//questoes 66 a 75
+	  "B", "D", "d", "E", "B", "C", "E", "C", "D", "E",
+	//questoes 76 a 85
+	  "C", "A", "A", "B", "E", "D", "B", "E","B", "B",
+	//questoes 86 a 90
+	  "E", "B", "E", "C", "C"],
+
+	//gabarito Azul
+	//questoes 6 a 15
+	["C", "E", "C", "B", "B", "B", "D", "B", "A", "A",
+	//questoes 16 a 25
+		"A", "D", "D", "D", "E", "B", "B", "C", "D", "D",
+	//questoes 26 a 35
+		"B", "C", "A", "C", "E", "D", "B", "E", "B", "C",
+	//questoes 36 a 45
+		"B", "C", "D", "E", "A", "E", "C", "C", "D", "A",
+	//questtoes 46 a 55
+		"C", "A", "C", "D", "D", "B", "D", "D", "E", "C",
+	//questoes 56 a 65
+		"C", "E", "D", "E", "E", "E", "B", "C", "E", "A",
+	//questoes 66 a 75
+		"E", "E", "C", "B", "B", "E", "B", "E", "D", "B",
+	//questoes 76 a 85
+		"E", "D", "E", "C", "B", "E", "B", "D", "C", "A",
+	//questoes 86 a 90
+		"A", "B", "C", "D", "E"],
+	//gabarito Rosa 
+	["E", "C", "A", "D", "B", "B", "B", "E", "C", "B", "E", "A", "E", "C", "A", "B", "D", "A", "D", "A", "C", "D", "B", "A", "B", "C", "E", "C", "B", "B", "E", "C", "A", "D", "A", "B", "E", "C", "E", "D",
+	//ciencias humas agora
+	"C", "D", "E", "C", "A", "A", "B", "B", "D", "D", "E", "C", "B", "E", "E", "D", "B", "E", "B", "B", "E", "B", "E", "D", "E", "E", "E", "B", "C", "E", "A", "E", "E", "C", "E", "C", "C", "D", "B", "D", "D", "C", "A", "C", "D"
+	],
+	//gabarito Branco 
+	//questoes 6 a 15
+	["A", "D", "D", "C", "D", "E", "A", "E", "C", "B",
+	//questoes 16 a 25
+		"C", "B", "A", "D", "B", "B", "C", "C", "E", "C",
+	//questoes 26 a 35
+		"B", "D", "E", "B", "E", "B", "B", "D", "C", "D",
+	//questoes 36 a 45
+		"A", "C", "E", "D", "B", "C", "A", "B", "A", "A",
+	//questtoes 46 a 55
+		"E", "C", "C", "B", "B", "E", "B", "E", "D", "B",
+	//questoes 56 a 65
+		"E", "D", "B", "D", "D", "A", "E", "E", "C", "D",
+	//questoes 66 a 75
+		"E", "C", "B", "E", "C", "A", "C", "D", "E", "D",
+	//questoes 76 a 85
+		"E", "E", "C", "D", "E", "C", "A", "A", "B", "B",
+	//questoes 86 a 90
+		"D", "E", "B", "C", "E"],
+	];
+	window.onload = function (){
+		animacoes();
+	}
+	$('#criarQuestoes').click(function () {
+		questoesAcertadas = 0;
+		questoesSelecionadas = [];
+		$('#numeroQuestoesAcertadas').html(questoesAcertadas + "/90");
+		const corProva = $('#corProva').val();
+		const linguaSelecionada = $('#linguaEstrangeira').val();
+		const legenda = ["Amarelo", "Azul", "Rosa", "Branco"];
+		const coresBackground = ["yellow", "blue", "#FF99FF", "#f0f0f0"];
+		const numeroLegenda = legenda.indexOf(corProva);
+		console.log('numero legenda : ' + numeroLegenda);
+		const linguaEstrangeiraNumero = linguaSelecionada === "Inglês" ? 0 : 1;
+		gabarito = gabaritoLinguasEstrangeiras[numeroLegenda][linguaEstrangeiraNumero].concat(gabaritoTodasCores[numeroLegenda]);
+		//GABARIOTO[0] contem o titulo da prova
+		$('#provaSelecionada').html(gabarito[0]);
+		console.log(gabarito);
+		GerarQuestoes(coresBackground[numeroLegenda]);
+	});
+
+	function GerarQuestoes(corBackground){
+		let codigoalternativas = "";
+		const alternativas = ['A', 'B', 'C', 'D', 'E'];
+		//sistema de for complexo que 'simula' o gabarito do ENEM
+		for (var c = 1; c <= 6; c++) {
+			//codigo que adiciona as colunas
+			codigoalternativas += "<div class = 'coluna' id = 'coluna" + c + "'>";
+			for (var l = 1; l <= 15; l++) {
+				//codigo que adiciona as linhas (tambem chamado de questao)
+				codigoalternativas += "<div class='linha' id='cl" + c + "linha" + l + "'>";
+				//codigo que adiciona o numero de cada questao
+				codigoalternativas += "<div class='nQuestao'>" + (l + ((c - 1) *  15)) + ":</div>";
+				for (var a = 0; a < 5; a++) {
+					codigoalternativas += "<div id = 'cl" + c + "q" + l + "a" + alternativas[a] + "' class='alternativa' onclick='mostrarResultado(" + c + ", " + l + ", \"" + alternativas[a] + "\")'>" + alternativas[a] + "</div>"
+				}
+				codigoalternativas += "</div>";
+			}
+			codigoalternativas += "</div>";
+		}
+		$('#radioQuestoes').css("background-color", corBackground);
+		$('#radioQuestoes').html(codigoalternativas);
+		$('.coluna').css("border", "2px solid " + corBackground);
+	}
+
+	function mostrarResultado(numeroColuna, numeroQuestao, alternativaSelecionada) {
+		deixarUmSelecionado(numeroColuna, numeroQuestao, alternativaSelecionada);
+		//a versao numeroQuestao comum e um numero de 0 a 15;
+		const numeroQuestao0a90 = ((numeroColuna - 1) * 15) + numeroQuestao;
+		const respostaCorreta = gabarito[numeroQuestao0a90];
+		if(alternativaSelecionada === respostaCorreta) {
+			console.log('Alternativa correta!!');
+			if(questoesSelecionadas[numeroQuestao0a90] != alternativaSelecionada){
+				questoesAcertadas ++;
+			}
+			alternativaCorreta(numeroColuna, numeroQuestao, alternativaSelecionada);
+		} else {
+			if(questoesSelecionadas[numeroQuestao0a90] != alternativaSelecionada && questoesSelecionadas[numeroQuestao0a90] == respostaCorreta && questoesSelecionadas[numeroQuestao0a90] != null){
+				questoesAcertadas --;
+			}
+			alternativaIncorreta(numeroColuna, numeroQuestao, alternativaSelecionada, respostaCorreta);
+		}
+		questoesSelecionadas[numeroQuestao0a90] = alternativaSelecionada;
+		$('#numeroQuestoesAcertadas').html(questoesAcertadas + "/90");
+	}
+
+	function alternativaCorreta(numeroColuna, numeroQuestao, alternativaSelecionada){
+		$('#cl' + numeroColuna + 'linha' + numeroQuestao).css('background-color', 'green');
+		$('#cl' + numeroColuna + 'q' + numeroQuestao + "a" + alternativaSelecionada).css('color', '#66FF99');
+	}
+
+	function alternativaIncorreta(numeroColuna, numeroQuestao, alternativaSelecionada, respostaCorreta){
+		$('#cl' + numeroColuna + 'linha' + numeroQuestao).css('background-color', 'red');
+		$('#cl' + numeroColuna + 'q' + numeroQuestao + "a" + respostaCorreta).css('background-color', '#66FF99');
+	}
+
+	//ele simula um radioButtom
+	function deixarUmSelecionado(numeroColuna, numeroQuestao, alternativaSelecionada){
+		const alternativas = ['A', 'B', 'C', 'D', 'E'];
+		console.log('deixarSelecionado chamado!');
+		for (var i = 0; i < alternativas.length; i++) {
+			//se a alternativa for diferente do que ele selecionou
+			if(alternativas[i] != alternativaSelecionada){
+				//desmarca a alternativa
+				$('#cl' + numeroColuna + 'q' + numeroQuestao + "a" + alternativas[i]).css('background-color', 'white');
+				$('#cl' + numeroColuna + 'q' + numeroQuestao + "a" + alternativas[i]).css('color', 'black');
+			} else {
+				//marca a alternativa
+				$('#cl' + numeroColuna + 'q' + numeroQuestao + "a" + alternativas[i]).css('background-color', 'black');
+				$('#cl' + numeroColuna + 'q' + numeroQuestao + "a" + alternativas[i]).css('color', 'white');
+			}
+		}
+	}
+
+	function animacoes(){
+		$('#questoesAcertadas').hover(function (){
+			setTimeout(function (){
+				$('#questoesAcertadas').css('visibility', 'hidden');
+			}, 250);
+			setTimeout(function (){
+				//pequena animaçao dele voltando
+				$('#questoesAcertadas').css('visibility', 'visible');
+				$('#questoesAcertadas').css('visibility', 'visible');
+			}, 10000);
+		});
+
+	}
+	</script>
+</body>
+</html>
